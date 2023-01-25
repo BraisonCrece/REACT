@@ -11,13 +11,18 @@ function App() {
     const localBoard = window.localStorage.getItem('board')
     return localBoard ? JSON.parse(localBoard) : Array(9).fill(null)
   })
-  const [turn, setTurn] = useState(TURNS.X)
+  const [turn, setTurn] = useState(() => {
+    const localTurn = window.localStorage.getItem('turn')
+    return localTurn ? JSON.parse(localTurn) : TURNS.X
+  })
   const [winner, setWinner] = useState(null)
 
   const resetGame = () => {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
+    window.localStorage.removeItem('board')
+    window.localStorage.removeItem('turn')
   }
 
   const updateBoard = (index) => {
@@ -27,6 +32,7 @@ function App() {
     setBoard(newBoard)
     window.localStorage.setItem('board', JSON.stringify(newBoard))
     setTurn(turn === TURNS.X ? TURNS.O : TURNS.X)
+    window.localStorage.setItem('turn', JSON.stringify(turn === TURNS.X ? TURNS.O : TURNS.X))
     const playerWins = checkWinner(newBoard)
     if (playerWins) {
       setWinner(playerWins)
